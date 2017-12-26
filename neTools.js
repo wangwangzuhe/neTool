@@ -545,7 +545,37 @@
             img.unbind().load(imgHandler).error(imgHandler);
             $(img).attr("src",url);
         }
-    }
+	}
+	/**
+	 * 比较经典的Generator Function
+	 * @param {*} ms 
+	 */
+	function delay(ms) {
+		return new Promise((resolve, reject) => {
+			setTimeout(resolve, ms);
+		});
+	}
+	function* baum() {
+		yield delay(300).then(() => console.log(1))
+		yield console.log(2)
+		yield delay(300).then(() => console.log(3))
+		yield console.log(4)
+	}
+	function co(gen) {
+		const item = gen.next()
+		if (item.done) {
+			return item.value
+		}
+
+		const { value, done } = item
+		if (value instanceof Promise) {
+			value.then((e) => co(gen))
+		} else {
+			co(gen)
+		}
+	}
+
+//co(baum())
 
 	/****************************************************************
 	 * public
